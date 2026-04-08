@@ -5,7 +5,7 @@ import http from "http";
 // Only active in development when using LocalWP
 if (process.env.NODE_ENV === "development" && process.env.NEXT_PUBLIC_WORDPRESS_URL?.includes("petzifyco.local")) {
   const original = http.request.bind(http);
-  // @ts-expect-error patching http.request
+  // @ts-ignore
   http.request = function (opts, cb) {
     if (
       typeof opts === "object" &&

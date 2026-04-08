@@ -4,6 +4,8 @@ import api from "@/lib/woocommerce";
 import ProductCard from "@/components/ProductCard";
 import { Product } from "@/types";
 
+export const revalidate = 3600;
+
 async function getFeaturedProducts(): Promise<Product[]> {
   try {
     const { data } = await api.get("products", {
