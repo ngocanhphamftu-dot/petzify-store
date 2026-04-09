@@ -51,6 +51,51 @@ function stripHtml(html: string): string {
     .trim();
 }
 
+/**
+ * Returns true when the description is too short or uses the generic
+ * "Personalized … — made just for you." template that violates
+ * Microsoft / Google Merchant Center policies.
+ */
+function isGenericDescription(desc: string): boolean {
+  if (!desc || desc.length < 80) return true;
+  return /made just for you/i.test(desc) || /^personalized .{1,80}—\s*$/i.test(desc);
+}
+
+/**
+ * Build a specific, policy-compliant description from product metadata
+ * when the stored WooCommerce description is generic or missing.
+ */
+function buildDescription(p: Product): string {
+  const raw = stripHtml(p.short_description || p.description || "");
+  if (!isGenericDescription(raw)) {
+    return raw.length > 5000 ? raw.slice(0, 4997) + "..." : raw;
+  }
+
+  // Derive meaningful content from product data
+  const name         = p.name;
+  const categoryName = p.categories?.[0]?.name ?? "Gift";
+  const tags         = (p.tags ?? []).map((t) => t.name).filter(Boolean);
+  const attrs        = p.attributes ?? [];
+
+  const materialAttr = attrs.find((a) => /material|style|type|finish/i.test(a.name));
+  const sizeAttr     = attrs.find((a) => /size/i.test(a.name));
+
+  let desc = `${name} — a one-of-a-kind personalized ${categoryName.toLowerCase()}. `;
+
+  if (materialAttr?.options?.length) {
+    desc += `Available in ${materialAttr.options.slice(0, 3).join(", ")}. `;
+  }
+  if (sizeAttr?.options?.length) {
+    desc += `Sizes: ${sizeAttr.options.slice(0, 3).join(", ")}. `;
+  }
+  if (tags.length > 0) {
+    desc += `Great for ${tags.slice(0, 4).join(", ")}. `;
+  }
+  desc += "Add a custom name, photo, or personal message. Ships from the United States.";
+
+  return desc.length > 5000 ? desc.slice(0, 4997) + "..." : desc;
+}
+
 function getProductCategory(product: Product): string {
   if (!product.categories?.length) return "Home & Garden";
   const slug = product.categories[0].slug;
@@ -98,8 +143,7 @@ export async function GET() {
         ...img,
         src: normalizeImageUrl(img.src),
       }));
-      const description = stripHtml(p.short_description || p.description || p.name);
-      const truncatedDesc = description.length > 5000 ? description.slice(0, 4997) + "..." : description;
+      const truncatedDesc = buildDescription(p) || p.name;
       const category = getProductCategory(p);
       const title = p.name.length > 150 ? p.name.slice(0, 147) + "..." : p.name;
 

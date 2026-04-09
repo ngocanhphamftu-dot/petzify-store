@@ -10,6 +10,7 @@ export interface Product {
   short_description: string;
   images: { id: number; src: string; alt: string }[];
   categories: { id: number; name: string; slug: string }[];
+  tags?: { id: number; name: string; slug: string }[];
   attributes: { id: number; name: string; variation: boolean; visible: boolean; options: string[] }[];
   stock_status: string;
   stock_quantity: number | null;
