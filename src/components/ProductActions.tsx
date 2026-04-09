@@ -76,8 +76,19 @@ export default function ProductActions({ product, variations = [] }: Props) {
       return;
     }
 
+    // When a variation is selected, override the parent product's price with
+    // the variation's actual price so the cart displays the correct amount.
+    const productToAdd = selectedVariation
+      ? {
+          ...product,
+          price: selectedVariation.price || product.price,
+          regular_price: selectedVariation.regular_price || product.regular_price,
+          sale_price: selectedVariation.sale_price || "",
+        }
+      : product;
+
     addItem(
-      product,
+      productToAdd,
       1,
       selectedVariation?.id,
       Object.keys(selections).length > 0 ? { ...selections } : undefined,
