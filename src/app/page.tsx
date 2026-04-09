@@ -130,43 +130,94 @@ export default async function HomePage() {
   return (
     <div>
       {/* ── HERO ── */}
-      <section className="bg-gradient-to-br from-orange-50 via-amber-50 to-white py-16 md:py-24 px-4">
-        <div className="max-w-7xl mx-auto text-center">
-          <p className="text-[#F36621] font-semibold text-sm uppercase tracking-widest mb-3">
-            Personalized Gifts & Home Decor
-          </p>
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-800 mb-5 leading-tight">
+      <section
+        className="relative overflow-hidden py-20 md:py-28 px-4"
+        style={{
+          background: "linear-gradient(135deg, #ffe0cc 0%, #f9ccd8 28%, #eacef5 60%, #cfc3f0 100%)",
+        }}
+      >
+        {/* Decorative blobs — give depth to the gradient */}
+        <div
+          className="absolute -top-24 -left-24 w-96 h-96 rounded-full blur-3xl opacity-40 pointer-events-none"
+          style={{ background: "radial-gradient(circle, #F28D35 0%, transparent 70%)" }}
+        />
+        <div
+          className="absolute -bottom-24 -right-24 w-[28rem] h-[28rem] rounded-full blur-3xl opacity-35 pointer-events-none"
+          style={{ background: "radial-gradient(circle, #7B62D9 0%, transparent 70%)" }}
+        />
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[36rem] h-[36rem] rounded-full blur-3xl opacity-20 pointer-events-none"
+          style={{ background: "radial-gradient(circle, #D991A4 0%, transparent 70%)" }}
+        />
+
+        {/* Subtle dot-grid texture */}
+        <div
+          className="absolute inset-0 opacity-[0.06] pointer-events-none"
+          style={{
+            backgroundImage: "radial-gradient(#7B62D9 1px, transparent 1px)",
+            backgroundSize: "28px 28px",
+          }}
+        />
+
+        <div className="max-w-7xl mx-auto text-center relative z-10">
+          {/* Pill badge */}
+          <span
+            className="inline-block text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-5"
+            style={{ background: "rgba(242,141,53,0.18)", color: "#c45210" }}
+          >
+            ✦ Personalized Gifts &amp; Home Decor ✦
+          </span>
+
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-800 mb-5 leading-tight drop-shadow-sm">
             Make Every Gift <br />
-            <span className="text-[#F36621]">Uniquely Theirs</span>
+            <span
+              style={{
+                background: "linear-gradient(90deg, #F28D35 0%, #D991A4 55%, #7B62D9 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              Uniquely Theirs
+            </span>
           </h1>
-          <p className="text-gray-500 text-lg md:text-xl mb-8 max-w-2xl mx-auto">
+
+          <p className="text-gray-600 text-lg md:text-xl mb-8 max-w-2xl mx-auto leading-relaxed">
             Thoughtfully designed, custom-made products for the people who matter most.
             Perfect for every occasion.
           </p>
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/products"
-              className="inline-block bg-[#F36621] hover:bg-[#d4551a] text-white font-bold px-8 py-4 rounded-full text-base transition-colors shadow-lg"
+              className="inline-block text-white font-bold px-8 py-4 rounded-full text-base transition-all shadow-lg hover:scale-105 hover:shadow-xl"
+              style={{
+                background: "linear-gradient(90deg, #F28D35 0%, #D991A4 60%, #A175BF 100%)",
+              }}
             >
               Shop All Products
             </Link>
             <Link
               href="/help"
-              className="inline-block border-2 border-[#F36621] text-[#F36621] hover:bg-orange-50 font-bold px-8 py-4 rounded-full text-base transition-colors"
+              className="inline-block font-bold px-8 py-4 rounded-full text-base transition-all bg-white/70 backdrop-blur-sm hover:bg-white shadow-md hover:shadow-lg"
+              style={{ color: "#8a50c8", border: "2px solid #A175BF" }}
             >
               Need Help?
             </Link>
           </div>
+
           {/* Social proof micro-bar */}
-          <div className="mt-8 flex items-center justify-center gap-2 text-sm text-gray-500">
+          <div className="mt-8 flex items-center justify-center gap-2 text-sm text-gray-600">
             <div className="flex">
-              {[1,2,3,4,5].map(s => (
+              {[1, 2, 3, 4, 5].map((s) => (
                 <svg key={s} className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                 </svg>
               ))}
             </div>
-            <span><strong className="text-gray-700">4.9/5</strong> from over 2,000 happy customers</span>
+            <span>
+              <strong className="text-gray-800">4.9/5</strong> from over 2,000 happy customers
+            </span>
           </div>
         </div>
       </section>
@@ -349,17 +400,35 @@ export default async function HomePage() {
       </section>
 
       {/* ── CTA BANNER ── */}
-      <section className="bg-gradient-to-r from-[#F36621] to-[#F7921F] py-16 px-4 text-white text-center">
-        <h2 className="text-2xl md:text-4xl font-bold mb-3">Find the Perfect Personalized Gift</h2>
-        <p className="text-orange-100 mb-8 max-w-xl mx-auto text-sm md:text-base">
-          Browse our full collection of customized products. Something for everyone, for every occasion.
-        </p>
-        <Link
-          href="/products"
-          className="inline-block bg-white text-[#F36621] font-bold px-8 py-4 rounded-full hover:bg-orange-50 transition-colors text-base shadow-lg"
-        >
-          Shop All Products
-        </Link>
+      <section
+        className="relative overflow-hidden py-16 px-4 text-white text-center"
+        style={{
+          background: "linear-gradient(120deg, #F28D35 0%, #D991A4 40%, #A175BF 70%, #7B62D9 100%)",
+        }}
+      >
+        {/* Decorative shine overlay */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(ellipse at 50% -20%, rgba(255,255,255,0.18) 0%, transparent 60%)",
+          }}
+        />
+        <div className="relative z-10">
+          <h2 className="text-2xl md:text-4xl font-bold mb-3 drop-shadow">
+            Find the Perfect Personalized Gift
+          </h2>
+          <p className="text-white/80 mb-8 max-w-xl mx-auto text-sm md:text-base">
+            Browse our full collection of customized products. Something for everyone, for every occasion.
+          </p>
+          <Link
+            href="/products"
+            className="inline-block bg-white font-bold px-8 py-4 rounded-full text-base shadow-lg transition-all hover:scale-105 hover:shadow-xl"
+            style={{ color: "#A175BF" }}
+          >
+            Shop All Products
+          </Link>
+        </div>
       </section>
     </div>
   );
