@@ -17,6 +17,16 @@ export interface Product {
   rating_count: number;
 }
 
+export interface WCVariation {
+  id: number;
+  price: string;
+  regular_price: string;
+  sale_price: string;
+  stock_status: string;
+  stock_quantity: number | null;
+  attributes: { id: number; name: string; option: string }[];
+}
+
 export interface Category {
   id: number;
   name: string;
@@ -26,6 +36,10 @@ export interface Category {
 }
 
 export interface CartItem {
+  cartItemId: string;                          // unique identifier per cart entry
   product: Product;
   quantity: number;
+  variationId?: number;                        // WooCommerce variation ID
+  selectedAttributes?: Record<string, string>; // e.g. { Size: "XL", Color: "Red" }
+  personalization?: string;                    // custom text entered by customer
 }

@@ -1,5 +1,5 @@
 import api from "@/lib/woocommerce";
-import { Product } from "@/types";
+import { Product, WCVariation } from "@/types";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import ProductImageGallery from "@/components/ProductImageGallery";
@@ -101,6 +101,17 @@ export default async function ProductPage({
 
   const isOnSale = !!(product.sale_price && product.sale_price !== product.regular_price);
   const rating = parseFloat(product.average_rating || "0");
+
+  // Fetch all variations for variable products so ProductActions can resolve variationId
+  let variations: WCVariation[] = [];
+  if (product.type === "variable") {
+    try {
+      const { data } = await api.get(`products/${product.id}/variations`, { per_page: 100 });
+      variations = data ?? [];
+    } catch {
+      variations = [];
+    }
+  }
 
   // Fetch related products from first category
   const firstCategoryId = product.categories[0]?.id;
@@ -218,7 +229,7 @@ export default async function ProductPage({
           )}
 
           {/* Actions: price, size, buy more, add to cart */}
-          <ProductActions product={product} />
+          <ProductActions product={product} variations={variations} />
 
           {/* Accordions: Description / Shipping / Personalization */}
           <div className="mt-2">

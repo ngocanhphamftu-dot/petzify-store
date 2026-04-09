@@ -17,7 +17,8 @@ if (process.env.NODE_ENV === "development" && process.env.NEXT_PUBLIC_WORDPRESS_
       opts.hostname = "127.0.0.1";
       opts.port = 10004;
     }
-    return original(opts as Parameters<typeof http.request>[0], cb);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (original as any)(opts, cb);
   };
 }
 

@@ -3,9 +3,15 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useCartStore } from "@/store/cartStore";
+import { getDiscount } from "@/lib/constants";
 
 export default function CartPage() {
   const { items, removeItem, updateQuantity, totalPrice, clearCart } = useCartStore();
+
+  const subtotal = totalPrice();
+  const discountRate = getDiscount(items.length);
+  const discount = subtotal * discountRate;
+  const finalTotal = subtotal - discount;
 
   if (items.length === 0) {
     return (
@@ -30,50 +36,99 @@ export default function CartPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Cart Items */}
         <div className="lg:col-span-2 space-y-4">
-          {items.map(({ product, quantity }) => {
-            const image = product.images[0];
+          {items.map((item) => {
+            const image = item.product.images[0];
+            const price =
+              parseFloat(item.product.price) || parseFloat(item.product.regular_price) || 0;
             return (
-              <div key={product.id} className="flex gap-4 bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
+              <div
+                key={item.cartItemId}
+                className="flex gap-4 bg-white border border-gray-100 rounded-2xl p-4 shadow-sm"
+              >
                 <div className="relative w-24 h-24 flex-shrink-0 rounded-xl overflow-hidden bg-gray-100">
                   {image ? (
                     <Image
                       src={image.src}
-                      alt={image.alt || product.name}
+                      alt={image.alt || item.product.name}
                       fill
                       className="object-cover"
                       sizes="96px"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs">No img</div>
+                    <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs">
+                      No img
+                    </div>
                   )}
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <Link href={`/products/${product.slug}`} className="font-semibold text-gray-800 hover:text-[#F36621] line-clamp-2 transition-colors">
-                    {product.name}
+                  <Link
+                    href={`/products/${item.product.slug}`}
+                    className="font-semibold text-gray-800 hover:text-[#F36621] line-clamp-2 transition-colors"
+                  >
+                    {item.product.name}
                   </Link>
-                  <p className="text-[#F36621] font-bold mt-1">${parseFloat(product.price).toFixed(2)}</p>
+
+                  {/* Selected attributes */}
+                  {item.selectedAttributes &&
+                    Object.entries(item.selectedAttributes).length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 mt-1">
+                        {Object.entries(item.selectedAttributes).map(([k, v]) => (
+                          <span
+                            key={k}
+                            className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-md"
+                          >
+                            {k}: {v}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                  {/* Personalization */}
+                  {item.personalization && (
+                    <p className="text-xs text-gray-500 mt-1 italic">
+                      ✏️ &quot;{item.personalization}&quot;
+                    </p>
+                  )}
+
+                  <p className="text-[#F36621] font-bold mt-1">${price.toFixed(2)}</p>
 
                   <div className="flex items-center gap-3 mt-2">
                     <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-                      <button onClick={() => updateQuantity(product.id, quantity - 1)} className="px-2 py-1 hover:bg-gray-100 text-gray-600 transition-colors">−</button>
-                      <span className="px-3 py-1 text-sm font-semibold">{quantity}</span>
-                      <button onClick={() => updateQuantity(product.id, quantity + 1)} className="px-2 py-1 hover:bg-gray-100 text-gray-600 transition-colors">+</button>
+                      <button
+                        onClick={() => updateQuantity(item.cartItemId, item.quantity - 1)}
+                        className="px-2 py-1 hover:bg-gray-100 text-gray-600 transition-colors"
+                      >
+                        −
+                      </button>
+                      <span className="px-3 py-1 text-sm font-semibold">{item.quantity}</span>
+                      <button
+                        onClick={() => updateQuantity(item.cartItemId, item.quantity + 1)}
+                        className="px-2 py-1 hover:bg-gray-100 text-gray-600 transition-colors"
+                      >
+                        +
+                      </button>
                     </div>
-                    <button onClick={() => removeItem(product.id)} className="text-red-400 hover:text-red-600 text-sm transition-colors">
+                    <button
+                      onClick={() => removeItem(item.cartItemId)}
+                      className="text-red-400 hover:text-red-600 text-sm transition-colors"
+                    >
                       Remove
                     </button>
                   </div>
                 </div>
 
                 <div className="text-right font-bold text-gray-800">
-                  ${(parseFloat(product.price) * quantity).toFixed(2)}
+                  ${(price * item.quantity).toFixed(2)}
                 </div>
               </div>
             );
           })}
 
-          <button onClick={clearCart} className="text-sm text-gray-400 hover:text-red-500 transition-colors">
+          <button
+            onClick={clearCart}
+            className="text-sm text-gray-400 hover:text-red-500 transition-colors"
+          >
             Clear cart
           </button>
         </div>
@@ -83,11 +138,24 @@ export default function CartPage() {
           <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm sticky top-24">
             <h2 className="text-xl font-bold text-gray-800 mb-4">Order Summary</h2>
 
+            {/* Buy More Save More */}
+            {discountRate > 0 && (
+              <div className="bg-green-50 border border-green-100 rounded-xl px-3 py-2 mb-4 text-sm text-green-700 font-medium">
+                🎁 {Math.round(discountRate * 100)}% discount applied!
+              </div>
+            )}
+
             <div className="space-y-2 mb-4 text-sm text-gray-600">
               <div className="flex justify-between">
                 <span>Subtotal</span>
-                <span>${totalPrice().toFixed(2)}</span>
+                <span>${subtotal.toFixed(2)}</span>
               </div>
+              {discount > 0 && (
+                <div className="flex justify-between text-green-600 font-medium">
+                  <span>Discount ({Math.round(discountRate * 100)}% off)</span>
+                  <span>−${discount.toFixed(2)}</span>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span>Shipping</span>
                 <span className="text-green-600">Free</span>
@@ -97,7 +165,7 @@ export default function CartPage() {
             <div className="border-t pt-4 mb-6">
               <div className="flex justify-between font-bold text-lg text-gray-800">
                 <span>Total</span>
-                <span className="text-[#F36621]">${totalPrice().toFixed(2)}</span>
+                <span className="text-[#F36621]">${finalTotal.toFixed(2)}</span>
               </div>
             </div>
 
@@ -108,7 +176,10 @@ export default function CartPage() {
               Proceed to Checkout
             </Link>
 
-            <Link href="/products" className="block text-center text-sm text-gray-500 hover:text-[#F36621] mt-3 transition-colors">
+            <Link
+              href="/products"
+              className="block text-center text-sm text-gray-500 hover:text-[#F36621] mt-3 transition-colors"
+            >
               ← Continue Shopping
             </Link>
           </div>
