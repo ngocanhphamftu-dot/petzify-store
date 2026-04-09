@@ -1,58 +1,43 @@
 /**
- * Syncs the Next.js Zustand cart to the WooCommerce session (via WC Store API),
- * then redirects the browser to the native WC /checkout/ page so that
- * the CardsShield Gateway PayPal plugin renders its own payment UI.
+ * Syncs the Next.js Zustand cart to WooCommerce via a custom PHP REST endpoint,
+ * then navigates to the native WC /checkout/ page so CardsShield renders its UI.
  *
- * Why this works:
- *   - All fetch calls are same-origin (petzify.co → petzify.co/wp-json/)
- *   - credentials:"include" makes the browser automatically send + receive
- *     the woocommerce_session_* cookie on every request
- *   - window.location.href = "/checkout/" uses the same cookie jar,
- *     so WC sees a non-empty cart and renders the checkout form
+ * Endpoint: POST /wp-json/petzify/v1/cart-sync
+ *   - Clears the WC cart
+ *   - Adds each item via WC()->cart->add_to_cart()
+ *   - Sets the WC session cookie in the browser
+ *   - Returns { checkout_url }
+ *
+ * Because the fetch is same-origin and uses credentials:"include", the
+ * woocommerce_session_* cookie is automatically sent on the subsequent
+ * navigation to /checkout/, so WC sees a populated cart.
  */
 
 import type { CartItem } from "@/types";
 
 export async function syncCartAndRedirectToCheckout(items: CartItem[]): Promise<void> {
-  // ── 1. GET /cart  → establishes WC session cookie + returns Nonce ──────
-  const cartRes = await fetch("/wp-json/wc/store/v1/cart", {
-    credentials: "include",
+  const payload = items.map((item) => ({
+    productId:          item.product.id,
+    quantity:           item.quantity,
+    variationId:        item.variationId ?? null,
+    selectedAttributes: item.selectedAttributes ?? {},
+    personalization:    item.personalization ?? "",
+  }));
+
+  const res = await fetch("/wp-json/petzify/v1/cart-sync", {
+    method:      "POST",
+    credentials: "include",          // sends + receives WC session cookie
+    headers:     { "Content-Type": "application/json" },
+    body:        JSON.stringify(payload),
   });
 
-  if (!cartRes.ok) {
-    throw new Error(`WC Store API unavailable (${cartRes.status})`);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error ?? `Cart sync failed (${res.status})`);
   }
 
-  // Nonce is safe to read — same-origin request, no CORS restriction
-  const nonce = cartRes.headers.get("Nonce") ?? "";
+  const data = await res.json();
 
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    ...(nonce ? { Nonce: nonce } : {}),
-  };
-
-  // ── 2. DELETE all existing items in WC cart ─────────────────────────────
-  await fetch("/wp-json/wc/store/v1/cart/items", {
-    method: "DELETE",
-    credentials: "include",
-    headers: nonce ? { Nonce: nonce } : {},
-  });
-
-  // ── 3. Add each item ────────────────────────────────────────────────────
-  for (const item of items) {
-    // For variable products use variationId; WC treats variations as products
-    const id = item.variationId ?? item.product.id;
-
-    await fetch("/wp-json/wc/store/v1/cart/add-item", {
-      method: "POST",
-      credentials: "include",
-      headers,
-      body: JSON.stringify({ id, quantity: item.quantity }),
-    });
-  }
-
-  // ── 4. Navigate to WC native checkout ───────────────────────────────────
-  // The browser cookie jar now has the WC session with items populated,
-  // so WooCommerce will render the checkout form instead of redirecting to cart.
-  window.location.href = "/checkout/";
+  // Navigate to WC checkout — session cookie now has the populated cart
+  window.location.href = data.checkout_url ?? "/checkout/";
 }
