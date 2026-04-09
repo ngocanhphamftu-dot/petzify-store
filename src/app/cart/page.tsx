@@ -1,12 +1,25 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useCartStore } from "@/store/cartStore";
 import { getDiscount } from "@/lib/constants";
+import { syncCartAndRedirectToCheckout } from "@/lib/wcCartSync";
 
 export default function CartPage() {
   const { items, removeItem, updateQuantity, totalPrice, clearCart } = useCartStore();
+  const [syncing, setSyncing] = useState(false);
+
+  const handleCheckout = async () => {
+    if (syncing || items.length === 0) return;
+    setSyncing(true);
+    try {
+      await syncCartAndRedirectToCheckout(items);
+    } catch {
+      window.location.href = "/checkout";
+    }
+  };
 
   const subtotal = totalPrice();
   const discountRate = getDiscount(items.length);
@@ -169,12 +182,17 @@ export default function CartPage() {
               </div>
             </div>
 
-            <Link
-              href="/checkout"
-              className="block w-full text-center bg-[#F36621] hover:bg-[#d4551a] text-white font-bold py-4 rounded-2xl transition-colors"
+            <button
+              onClick={handleCheckout}
+              disabled={syncing}
+              className={`block w-full text-center font-bold py-4 rounded-2xl transition-colors ${
+                syncing
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-[#F36621] hover:bg-[#d4551a] text-white"
+              }`}
             >
-              Proceed to Checkout
-            </Link>
+              {syncing ? "Redirecting..." : "Proceed to Checkout"}
+            </button>
 
             <Link
               href="/products"
