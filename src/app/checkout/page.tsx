@@ -296,48 +296,14 @@ export default function CheckoutPage() {
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
               <h2 className="text-lg font-semibold text-gray-800 mb-4">Payment</h2>
 
-              {/* PayPal option */}
-              <div className="border-2 border-[#0070ba] bg-[#f5faff] rounded-xl px-4 py-4">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-3">
-                    <div className="w-4 h-4 rounded-full bg-[#0070ba] flex items-center justify-center flex-shrink-0">
-                      <div className="w-2 h-2 rounded-full bg-white" />
-                    </div>
-                    <span className="text-sm font-semibold text-gray-800">PayPal &amp; Credit/Debit Cards</span>
-                  </div>
-                  {/* PayPal logo */}
-                  <svg viewBox="0 0 101 32" className="h-6 w-auto" xmlns="http://www.w3.org/2000/svg">
-                    <path fill="#253B80" d="M12.237 2.8H4.437c-.5 0-1 .4-1.1.9L.237 23.6c-.1.4.2.7.6.7h3.9c.5 0 1-.4 1.1-.9l.8-5.2c.1-.5.5-.9 1.1-.9h2.5c5.1 0 8.1-2.5 8.9-7.4.3-2.1 0-3.8-1-4.9-1.1-1.3-3-2.2-5.9-2.2zm.9 7.3c-.4 2.8-2.5 2.8-4.6 2.8h-1.2l.8-5.1c.1-.3.3-.5.6-.5h.5c1.4 0 2.7 0 3.4.8.4.5.6 1.2.5 2z"/>
-                    <path fill="#179BD7" d="M35.237 10h-3.9c-.3 0-.5.2-.6.5l-.2 1.1-.3-.4c-.9-1.3-2.9-1.7-4.9-1.7-4.6 0-8.5 3.5-9.3 8.3-.4 2.4.2 4.7 1.5 6.3 1.2 1.5 3 2.1 5.1 2.1 3.7 0 5.8-2.4 5.8-2.4l-.2 1.1c-.1.4.2.7.6.7h3.5c.5 0 1-.4 1.1-.9l2.1-13.3c.1-.3-.1-.6-.4-.6l.1.1zm-5.4 8c-.4 2.3-2.2 3.9-4.6 3.9-1.2 0-2.1-.4-2.7-1.1-.6-.7-.8-1.7-.6-2.8.4-2.3 2.2-3.9 4.5-3.9 1.2 0 2.1.4 2.7 1.1.7.7.9 1.7.7 2.8z"/>
-                    <path fill="#253B80" d="M57.137 10h-3.9c-.4 0-.7.2-.9.5l-5.3 7.8-2.2-7.5c-.2-.5-.6-.8-1.1-.8h-3.8c-.4 0-.7.4-.6.8l4.2 12.3-4 5.6c-.3.4 0 .9.5.9h3.9c.4 0 .7-.2.9-.5l12.7-18.3c.3-.3 0-.8-.4-.8z"/>
-                    <path fill="#179BD7" d="M68.237 2.8H60.437c-.5 0-1 .4-1.1.9L56.137 23.6c-.1.4.2.7.6.7h4.2c.3 0 .6-.2.7-.5l.9-5.6c.1-.5.5-.9 1.1-.9h2.5c5.1 0 8.1-2.5 8.9-7.4.3-2.1 0-3.8-1-4.9-1.2-1.2-3.1-2.2-5.8-2.2zm.9 7.3c-.4 2.8-2.5 2.8-4.6 2.8h-1.2l.8-5.1c.1-.3.3-.5.6-.5h.5c1.4 0 2.7 0 3.4.8.4.5.5 1.2.5 2z"/>
-                    <path fill="#253B80" d="M91.237 10h-3.9c-.3 0-.5.2-.6.5l-.2 1.1-.3-.4c-.9-1.3-2.9-1.7-4.9-1.7-4.6 0-8.5 3.5-9.3 8.3-.4 2.4.2 4.7 1.5 6.3 1.2 1.5 3 2.1 5.1 2.1 3.7 0 5.8-2.4 5.8-2.4l-.2 1.1c-.1.4.2.7.6.7h3.5c.5 0 1-.4 1.1-.9l2.1-13.3c0-.4-.2-.7-.5-.7l-.4.3zm-5.4 8c-.4 2.3-2.2 3.9-4.6 3.9-1.2 0-2.1-.4-2.7-1.1-.6-.7-.8-1.7-.6-2.8.4-2.3 2.2-3.9 4.5-3.9 1.2 0 2.1.4 2.7 1.1.7.7.9 1.7.7 2.8z"/>
-                    <path fill="#179BD7" d="M95.337 3.3l-3.3 21c-.1.4.2.7.6.7h3.4c.5 0 1-.4 1.1-.9l3.3-20.9c.1-.4-.2-.7-.6-.7h-3.8c-.4.1-.6.4-.7.8z"/>
-                  </svg>
+              <div className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 flex items-start gap-3">
+                <span className="text-xl mt-0.5">🔒</span>
+                <div>
+                  <p className="text-sm font-medium text-gray-800">Secure Payment via PayPal</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    After reviewing your order, you will be redirected to the payment page to choose PayPal or pay by credit/debit card — powered by PayPal.
+                  </p>
                 </div>
-
-                {/* Accepted cards */}
-                <div className="flex items-center gap-2 mt-2 ml-7">
-                  <span className="text-xs text-gray-500">Accepted:</span>
-                  {["VISA", "MC", "AMEX", "DISC"].map((card) => (
-                    <span key={card} className="text-[10px] font-bold border border-gray-300 rounded px-1.5 py-0.5 text-gray-600 bg-white">
-                      {card}
-                    </span>
-                  ))}
-                </div>
-
-                <p className="text-xs text-[#0070ba] mt-2 ml-7">
-                  After clicking &quot;Continue to Payment&quot;, you will be securely redirected to complete your purchase.
-                </p>
-              </div>
-
-              {/* Security badges */}
-              <div className="flex items-center gap-3 mt-3 text-xs text-gray-400">
-                <span>🔒 SSL Secured</span>
-                <span>·</span>
-                <span>🛡️ Buyer Protection</span>
-                <span>·</span>
-                <span>💳 No account needed</span>
               </div>
             </div>
 
@@ -435,7 +401,7 @@ export default function CheckoutPage() {
                     : "bg-[#0070ba] hover:bg-[#005ea6] text-white shadow-md hover:shadow-lg"
                 }`}
               >
-                {loading ? "Processing..." : `Continue to Payment — $${finalTotal.toFixed(2)}`}
+                {loading ? "Processing..." : `Place Order — $${finalTotal.toFixed(2)}`}
               </button>
 
               {/* Trust signals */}
