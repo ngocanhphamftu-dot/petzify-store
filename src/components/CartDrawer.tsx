@@ -1,27 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { useCartStore } from "@/store/cartStore";
 import { getDiscount } from "@/lib/constants";
-import { syncCartAndRedirectToCheckout } from "@/lib/wcCartSync";
 
 export default function CartDrawer() {
   const { items, isOpen, closeDrawer, removeItem, updateQuantity, totalItems, totalPrice } =
     useCartStore();
   const drawerRef = useRef<HTMLDivElement>(null);
-  const [syncing, setSyncing] = useState(false);
-
-  const handleCheckout = async () => {
-    if (syncing || items.length === 0) return;
-    setSyncing(true);
-    try {
-      await syncCartAndRedirectToCheckout(items);
-    } catch {
-      // Fallback: go to WC checkout directly even if sync failed
-      window.location.href = "/checkout";
-    }
-  };
 
   // Close on Escape key
   useEffect(() => {
@@ -243,17 +230,13 @@ export default function CartDrawer() {
             </div>
 
             {/* Buttons */}
-            <button
-              onClick={handleCheckout}
-              disabled={syncing}
-              className={`block w-full font-bold text-center py-3.5 rounded-2xl transition-colors text-base ${
-                syncing
-                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  : "bg-[#F36621] hover:bg-[#d4551a] text-white"
-              }`}
+            <Link
+              href="/checkout"
+              onClick={closeDrawer}
+              className="block w-full bg-[#F36621] hover:bg-[#d4551a] text-white font-bold text-center py-3.5 rounded-2xl transition-colors text-base"
             >
-              {syncing ? "Redirecting..." : `Checkout — $${finalTotal.toFixed(2)}`}
-            </button>
+              Checkout — ${finalTotal.toFixed(2)}
+            </Link>
             <Link
               href="/cart"
               onClick={closeDrawer}
