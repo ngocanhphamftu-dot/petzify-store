@@ -206,9 +206,12 @@ export async function POST(req: NextRequest) {
       .trim();
 
     // 8. Create order in WooCommerce
+    const paymentMethod: string = (formData.paymentMethod as string) || "mecom_paypal";
+    const paymentMethodTitle = paymentMethod === "mecom_paypal" ? "PayPal & Cards" : "Cash on Delivery";
+
     const orderData = {
-      payment_method: "cod",
-      payment_method_title: "Cash on Delivery",
+      payment_method: paymentMethod,
+      payment_method_title: paymentMethodTitle,
       set_paid: false,
       status: "pending",
       billing: {
@@ -253,6 +256,8 @@ export async function POST(req: NextRequest) {
       success: true,
       orderId: data.id,
       orderKey: data.order_key,
+      // payment_url returned by WooCommerce for redirect-based gateways (PayPal)
+      paymentUrl: data.payment_url || null,
     });
   } catch (err: unknown) {
     console.error("[orders] POST error:", err);
